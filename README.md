@@ -1,0 +1,50 @@
+# VibeMoney - AI 驱动的多账本理财助手
+
+VibeMoney 是一款基于 **Android 16 设计语言** 构建的现代化理财应用。
+
+[ ![Download APK](https://img.shields.io/badge/Download-APK-green?style=for-the-badge&logo=android) ](https://github.com/xiongzikun0106/VibeMoney/releases/latest)
+
+## 🌟 核心特性
+
+- **多账本动线架构**：支持“日常”、“临时”和“专项”账本。不同账本拥有独立的预算、流水和视觉主题。
+- **灵动 UI 交互**：
+    - **Android 16 风格**：全页面滚动效果，结合 Material 3 响应式设计。
+    - **动态圆环监控**：首页巨大的圆环实时显示剩余预算，当预算低于 20% 时自动变色预警。
+    - **灵动卡片堆叠**：通过左右滑动顶部的灵动卡片在不同账本间无缝切换。
+- **AI 深度复盘**：
+    - **API 自动化**：支持用户自定义 LLM API（如 Gemini 3.0 Flash）对消费状况进行多维度分析。
+    - **提示词工程**：若未配置 API，可一键生成专业级财务分析提示词并复制到剪贴板。
+- **智能自动化逻辑**：
+    - **自动归档**：账本到达结束日期后自动进入历史归档，防止过期账本干扰日常记录。
+    - **自动扣款**：新建账本时可录入固定开支（如房租、订阅费），系统自动生成流水并计算初始可用额度。
+    - **每日建议支出**：实时计算 `(总预算 - 已消费) / 剩余天数`，给用户最直观的消费建议。
+- **国际化支持**：完整的中英双语切换，界面文字实时刷新。
+- **一键数据导出**：支持将账本流水导出为标准的 CSV 格式。
+
+## 🛠️ 技术栈
+
+- **语言**：Kotlin
+- **UI 框架**：Jetpack Compose (声明式 UI)
+- **数据库**：Room Database (持久化存储)
+- **网络**：Retrofit & Gson (AI 接口对接)
+- **架构模式**：MVVM + Repository 模式
+
+## 🚀 快速开始
+
+### 安装步骤
+1. 点击顶部的 **Download APK** 按钮下载安装包。
+2. 在安卓手机上打开 APK 进行安装。
+3. 进入设置配置您的 Gemini API Key。
+
+## 🤖 AI 配置指南
+
+为了获得最佳的 AI 复盘体验，请按照以下步骤配置：
+1. 进入应用内的 **设置 (Settings)** 页面。
+2. 填写 **API URL**（如：`https://generativelanguage.googleapis.com/v1beta/openai/chat/completions`）。
+3. 填写您的 **API Key**。
+4. 填写 **API Model**（推荐使用 `gemini-3.0-flash`）。
+5. 点击 **保存设置 (Save API Settings)**。
+
+## 📄 开源协议
+
+本项目采用 CC0 协议开源。
