@@ -6,16 +6,18 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.vibemoney.ui.VibeViewModel
 import com.example.vibemoney.ui.getString
+import java.text.SimpleDateFormat
+import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,6 +32,15 @@ fun CreateLedgerScreen(
     var selectedPeriod by remember { mutableStateOf("Month") }
     var selectedType by remember { mutableStateOf("Daily") }
     
+    // 自定义结束日期状态
+    var showDatePicker by remember { mutableStateOf(false) }
+    val calendar = remember { Calendar.getInstance() }
+    var customEndDate by remember { mutableStateOf<Long?>(null) }
+
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = System.currentTimeMillis() + 86400000 * 7 // 默认一周后
+    )
+
     val periods = listOf("Week", "Month", "Quarter", "Year")
     val periodDisplay = mapOf(
         "Week" to strings.week,
@@ -46,6 +57,20 @@ fun CreateLedgerScreen(
     )
     
     val fixedExpenses = remember { mutableStateListOf<Pair<String, String>>() }
+
+    if (showDatePicker) {
+        DatePickerDialog(
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    customEndDate = datePickerState.selectedDateMillis
+                    showDatePicker = false
+                }) { Text(strings.save) }
+            }
+        ) {
+            DatePicker(state = datePickerState)
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -92,6 +117,7 @@ fun CreateLedgerScreen(
                 }
             }
 
+            // 周期或自定义时间选择
             Row(verticalAlignment = Alignment.CenterVertically) {
                 OutlinedTextField(
                     value = budget,
@@ -101,22 +127,36 @@ fun CreateLedgerScreen(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
                 )
                 Spacer(modifier = Modifier.width(16.dp))
-                Box {
-                    var expanded by remember { mutableStateOf(false) }
-                    FilterChip(
-                        selected = true,
-                        onClick = { expanded = true },
-                        label = { Text(periodDisplay[selectedPeriod] ?: selectedPeriod) }
+                
+                if (selectedType == "Temporary") {
+                    // 临时账本显示自定义日期选择
+                    IconButton(onClick = { showDatePicker = true }) {
+                        Icon(Icons.Default.CalendarMonth, contentDescription = "Select Date")
+                    }
+                    val df = SimpleDateFormat("MM/dd", Locale.getDefault())
+                    Text(
+                        text = customEndDate?.let { df.format(Date(it)) } ?: strings.selectLanguage,
+                        style = MaterialTheme.typography.bodySmall
                     )
-                    DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                        periods.forEach { p ->
-                            DropdownMenuItem(
-                                text = { Text(periodDisplay[p] ?: p) },
-                                onClick = {
-                                    selectedPeriod = p
-                                    expanded = false
-                                }
-                            )
+                } else {
+                    // 其他账本显示周期下拉
+                    Box {
+                        var expanded by remember { mutableStateOf(false) }
+                        FilterChip(
+                            selected = true,
+                            onClick = { expanded = true },
+                            label = { Text(periodDisplay[selectedPeriod] ?: selectedPeriod) }
+                        )
+                        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                            periods.forEach { p ->
+                                DropdownMenuItem(
+                                    text = { Text(periodDisplay[p] ?: p) },
+                                    onClick = {
+                                        selectedPeriod = p
+                                        expanded = false
+                                    }
+                                )
+                            }
                         }
                     }
                 }
@@ -175,7 +215,8 @@ fun CreateLedgerScreen(
                             type = selectedType,
                             budget = budgetValue,
                             period = selectedPeriod,
-                            fixedExpenses = fixedList
+                            fixedExpenses = fixedList,
+                            customEndDate = if (selectedType == "Temporary") customEndDate else null
                         )
                         onFinished()
                     }

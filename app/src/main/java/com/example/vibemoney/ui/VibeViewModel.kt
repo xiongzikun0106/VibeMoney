@@ -23,7 +23,6 @@ class VibeViewModel(application: Application) : AndroidViewModel(application) {
     val activeTransactions: StateFlow<List<Transaction>>
     val currentSpent: StateFlow<Double>
 
-    // --- Settings State (Persisted) ---
     private val _apiKey = MutableStateFlow(sharedPrefs.getString("api_key", "") ?: "")
     val apiKey = _apiKey.asStateFlow()
 
@@ -114,25 +113,51 @@ class VibeViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun switchLedger(ledgerId: Int) { viewModelScope.launch { repository.switchLedger(ledgerId) } }
-    fun startNewLedger(name: String, type: String, budget: Double, period: String, fixedExpenses: List<Pair<String, Double>>) {
+
+    fun startNewLedger(
+        name: String,
+        type: String,
+        budget: Double,
+        period: String,
+        fixedExpenses: List<Pair<String, Double>>,
+        customEndDate: Long? = null // 新增：支持自定义结束日期
+    ) {
         viewModelScope.launch {
             val calendar = Calendar.getInstance()
             val startDate = calendar.timeInMillis
-            when (period) {
-                "Week" -> calendar.add(Calendar.DAY_OF_YEAR, 7)
-                "Month" -> calendar.add(Calendar.MONTH, 1)
-                "Quarter" -> calendar.add(Calendar.MONTH, 3)
-                "Year" -> calendar.add(Calendar.YEAR, 1)
+            
+            val endDate = if (customEndDate != null) {
+                customEndDate
+            } else {
+                when (period) {
+                    "Week" -> calendar.add(Calendar.DAY_OF_YEAR, 7)
+                    "Month" -> calendar.add(Calendar.MONTH, 1)
+                    "Quarter" -> calendar.add(Calendar.MONTH, 3)
+                    "Year" -> calendar.add(Calendar.YEAR, 1)
+                }
+                calendar.timeInMillis
             }
-            val endDate = calendar.timeInMillis
-            repository.createNewLedger(Ledger(name = name, type = type, iconRes = 0, totalBudget = budget, startDate = startDate, endDate = endDate, isActive = true, isClosed = false), fixedExpenses)
+
+            val newLedger = Ledger(
+                name = name,
+                type = type,
+                iconRes = 0,
+                totalBudget = budget,
+                startDate = startDate,
+                endDate = endDate,
+                isActive = true,
+                isClosed = false
+            )
+            repository.createNewLedger(newLedger, fixedExpenses)
         }
     }
+
     fun addTransaction(note: String, amount: Double, category: String, type: Int) {
         val currentLedger = activeLedger.value ?: return
         if (currentLedger.isClosed || System.currentTimeMillis() > currentLedger.endDate) return
         viewModelScope.launch { repository.insertTransaction(Transaction(ledgerId = currentLedger.id, note = note, amount = amount, category = category, type = type, date = System.currentTimeMillis())) }
     }
+
     fun getDailySuggestion(): Double {
         val ledger = activeLedger.value ?: return 0.0
         val remainingBudget = ledger.totalBudget - currentSpent.value
@@ -144,10 +169,12 @@ class VibeViewModel(application: Application) : AndroidViewModel(application) {
         val remainingDays = ((ledger.endDate - now) / (1000 * 60 * 60 * 24)).coerceAtLeast(1)
         return remainingBudget / remainingDays
     }
+
     fun generatePrompt(): String {
         val ledger = activeLedger.value ?: return ""
         val transactionsText = activeTransactions.value.joinToString("\n") { "- ${if(it.type == 0) "支出" else "收入"}: ¥${it.amount}, 分类: ${it.category}, 备注: ${it.note}" }
         return "你是一位专业的财务分析师。请分析我本周期的账单：\n账本名称：${ledger.name}\n周期类型：${ledger.type}\n总预算：¥${ledger.totalBudget}\n净支出：¥${currentSpent.value}\n详细流水如下：\n$transactionsText\n请给出简洁的分析结果，直接以纯文本格式回答，不要使用Markdown。"
     }
+
     fun clearAiResult() { _aiAnalysisResult.value = null }
 }

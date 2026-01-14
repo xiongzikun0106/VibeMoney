@@ -68,7 +68,14 @@ data class AppStrings(
     val ledgerExpired: String,
     val about: String,
     val version: String,
-    val aiPowered: String
+    val aiPowered: String,
+    val balance: String,
+    val noSuggestion: String,
+    val catFood: String,
+    val catTransport: String,
+    val catShopping: String,
+    val catBills: String,
+    val catGeneral: String
 )
 
 val zhStrings = AppStrings(
@@ -130,7 +137,14 @@ val zhStrings = AppStrings(
     ledgerExpired = "此账本已结束",
     about = "关于 VibeMoney",
     version = "版本 1.0.0",
-    aiPowered = "Powered by Gemini AI"
+    aiPowered = "Powered by Gemini AI",
+    balance = "当前余额",
+    noSuggestion = "预算已用尽",
+    catFood = "餐饮",
+    catTransport = "交通",
+    catShopping = "购物",
+    catBills = "账单",
+    catGeneral = "其他"
 )
 
 val enStrings = AppStrings(
@@ -192,7 +206,14 @@ val enStrings = AppStrings(
     ledgerExpired = "Ledger Expired",
     about = "About VibeMoney",
     version = "Version 1.0.0",
-    aiPowered = "Powered by Gemini AI"
+    aiPowered = "Powered by Gemini AI",
+    balance = "Balance",
+    noSuggestion = "Budget Exhausted",
+    catFood = "Food",
+    catTransport = "Transport",
+    catShopping = "Shopping",
+    catBills = "Bills",
+    catGeneral = "General"
 )
 
 val LocalAppStrings = staticCompositionLocalOf { zhStrings }

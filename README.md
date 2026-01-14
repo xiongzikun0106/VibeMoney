@@ -1,8 +1,8 @@
 # VibeMoney - AI 驱动的多账本理财助手
 
-VibeMoney 是一款基于 **Android 16 设计语言** 构建的现代化理财应用。
+VibeMoney 是一款基于 **Android 16 设计语言** 构建的现代化理财应用。它不仅仅是一个记账工具，更是通过 **Gemini AI** 深度集成的财务分析专家。
 
-[ ![Download APK](https://img.shields.io/badge/Download-APK-green?style=for-the-badge&logo=android) ](https://github.com/xiongzikun0106/VibeMoney/releases/latest)
+
 
 ## 🌟 核心特性
 
