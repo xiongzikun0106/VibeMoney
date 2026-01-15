@@ -130,14 +130,22 @@ fun CreateLedgerScreen(
                 
                 if (selectedType == "Temporary") {
                     // 临时账本显示自定义日期选择
-                    IconButton(onClick = { showDatePicker = true }) {
-                        Icon(Icons.Default.CalendarMonth, contentDescription = "Select Date")
+                    OutlinedButton(
+                        onClick = { showDatePicker = true },
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp)
+                    ) {
+                        Icon(
+                            Icons.Default.CalendarMonth, 
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        val df = SimpleDateFormat("MM/dd", Locale.getDefault())
+                        Text(
+                            text = customEndDate?.let { df.format(Date(it)) } ?: strings.selectEndDate,
+                            style = MaterialTheme.typography.bodySmall
+                        )
                     }
-                    val df = SimpleDateFormat("MM/dd", Locale.getDefault())
-                    Text(
-                        text = customEndDate?.let { df.format(Date(it)) } ?: strings.selectLanguage,
-                        style = MaterialTheme.typography.bodySmall
-                    )
                 } else {
                     // 其他账本显示周期下拉
                     Box {
@@ -202,10 +210,23 @@ fun CreateLedgerScreen(
                 }
             }
 
+            // 验证：临时账本必须选择结束日期
+            val isTemporaryWithoutDate = selectedType == "Temporary" && customEndDate == null
+            val budgetValue = budget.toDoubleOrNull() ?: 0.0
+            val canCreate = name.isNotEmpty() && budgetValue > 0 && !isTemporaryWithoutDate
+
+            // 临时账本未选日期时显示提示
+            if (isTemporaryWithoutDate && name.isNotEmpty() && budgetValue > 0) {
+                Text(
+                    text = strings.endDateRequired,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+
             Button(
                 onClick = {
-                    val budgetValue = budget.toDoubleOrNull() ?: 0.0
-                    if (name.isNotEmpty() && budgetValue > 0) {
+                    if (canCreate) {
                         val fixedList = fixedExpenses.mapNotNull { 
                             val amt = it.second.toDoubleOrNull()
                             if (it.first.isNotEmpty() && amt != null) it.first to amt else null
@@ -222,6 +243,7 @@ fun CreateLedgerScreen(
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
+                enabled = canCreate,
                 shape = MaterialTheme.shapes.large,
                 contentPadding = PaddingValues(16.dp)
             ) {

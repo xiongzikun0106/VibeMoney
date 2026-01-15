@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import com.example.vibemoney.data.Ledger
 import com.example.vibemoney.ui.VibeViewModel
 import com.example.vibemoney.ui.getString
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -52,6 +53,7 @@ fun HomeScreen(viewModel: VibeViewModel) {
     val strings = getString()
     val context = LocalContext.current
     var isAddingNewLedger by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
 
     if (activeLedgers.isEmpty() || isAddingNewLedger) {
         CreateLedgerScreen(
@@ -206,6 +208,22 @@ fun HomeScreen(viewModel: VibeViewModel) {
                                 Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
                                     Text(strings.netSpent, style = MaterialTheme.typography.labelSmall)
                                     Text("¥${String.format(Locale.getDefault(), "%.0f", currentSpent)}", style = MaterialTheme.typography.titleMedium)
+                                }
+                                // 导出 CSV 按钮
+                                IconButton(
+                                    onClick = {
+                                        coroutineScope.launch {
+                                            val success = viewModel.exportTransactionsToCsv()
+                                            val message = if (success) strings.exportSuccess else strings.exportFailed
+                                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                                ) {
+                                    Icon(
+                                        Icons.Default.FileDownload,
+                                        contentDescription = strings.exportCsv,
+                                        tint = themeColor
+                                    )
                                 }
                             }
                         }

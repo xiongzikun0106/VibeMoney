@@ -13,8 +13,8 @@ android {
         applicationId = "com.example.vibemoney"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -40,6 +40,12 @@ android {
     }
 }
 
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+    arg("room.incremental", "true")
+    arg("room.generateKotlin", "true")
+}
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -61,10 +67,11 @@ dependencies {
     // Navigation
     implementation(libs.androidx.navigation.compose)
 
-    // Retrofit & Gson
+    // Retrofit & Gson & OkHttp
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.gson)
+    implementation(libs.okhttp)
 
     // Markdown rendering
     implementation(libs.compose.markdown)

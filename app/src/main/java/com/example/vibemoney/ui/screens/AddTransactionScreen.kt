@@ -23,11 +23,11 @@ fun AddTransactionScreen(viewModel: VibeViewModel, onBack: () -> Unit) {
     // 分类映射，UI 显示翻译后的文字，但数据库保存 key
     val categoryList = listOf("Food", "Transport", "Shopping", "Bills", "General")
     val categoryDisplay = mapOf(
-        "Food" to (if (strings.save == "保存") "餐饮" else "Food"),
-        "Transport" to (if (strings.save == "保存") "交通" else "Transport"),
-        "Shopping" to (if (strings.save == "保存") "购物" else "Shopping"),
-        "Bills" to (if (strings.save == "保存") "账单" else "Bills"),
-        "General" to (if (strings.save == "保存") "其他" else "General")
+        "Food" to strings.catFood,
+        "Transport" to strings.catTransport,
+        "Shopping" to strings.catShopping,
+        "Bills" to strings.catBills,
+        "General" to strings.catGeneral
     )
 
     Scaffold(

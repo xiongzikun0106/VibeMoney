@@ -75,7 +75,12 @@ data class AppStrings(
     val catTransport: String,
     val catShopping: String,
     val catBills: String,
-    val catGeneral: String
+    val catGeneral: String,
+    val selectEndDate: String,
+    val endDateRequired: String,
+    val exportCsv: String,
+    val exportSuccess: String,
+    val exportFailed: String
 )
 
 val zhStrings = AppStrings(
@@ -136,7 +141,7 @@ val zhStrings = AppStrings(
     finished = "已结束",
     ledgerExpired = "此账本已结束",
     about = "关于 VibeMoney",
-    version = "版本 1.0.0",
+    version = "版本 1.1.1",
     aiPowered = "Powered by Gemini AI",
     balance = "当前余额",
     noSuggestion = "预算已用尽",
@@ -144,7 +149,12 @@ val zhStrings = AppStrings(
     catTransport = "交通",
     catShopping = "购物",
     catBills = "账单",
-    catGeneral = "其他"
+    catGeneral = "其他",
+    selectEndDate = "选择结束日期",
+    endDateRequired = "请选择结束日期",
+    exportCsv = "导出",
+    exportSuccess = "已导出到下载目录",
+    exportFailed = "导出失败"
 )
 
 val enStrings = AppStrings(
@@ -205,7 +215,7 @@ val enStrings = AppStrings(
     finished = "Finished",
     ledgerExpired = "Ledger Expired",
     about = "About VibeMoney",
-    version = "Version 1.0.0",
+    version = "Version 1.1.1",
     aiPowered = "Powered by Gemini AI",
     balance = "Balance",
     noSuggestion = "Budget Exhausted",
@@ -213,7 +223,12 @@ val enStrings = AppStrings(
     catTransport = "Transport",
     catShopping = "Shopping",
     catBills = "Bills",
-    catGeneral = "General"
+    catGeneral = "General",
+    selectEndDate = "Select End Date",
+    endDateRequired = "Please select end date",
+    exportCsv = "Export",
+    exportSuccess = "Exported to Downloads",
+    exportFailed = "Export failed"
 )
 
 val LocalAppStrings = staticCompositionLocalOf { zhStrings }
